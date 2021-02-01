@@ -159,10 +159,17 @@ variadic argument has been passed on the stack, all future arguments will also
 be passed on the stack (i.e. the last argument register may be left unused due
 to the aligned register pair rule).
 
+The half precision floating-point value are converted to double for unprototyped
+and variadic functions.
+
+The half precision floating-point value can be passed as function argument and
+returned by a function.
+
 Values are returned in the same manner as a first named argument of the same
 type would be passed.  If such an argument would have been passed by
 reference, the caller allocates memory for the return value, and passes the
 address as an implicit first parameter.
+
 
 The stack grows downwards (towards lower addresses) and the stack pointer shall
 be aligned to a 128-bit boundary upon procedure entry.
@@ -378,6 +385,7 @@ There are two conventions for C type sizes and alignments.
     long long            |  8            |  8
     __int128             | 16            | 16
     void *               |  8            |  8
+    __fp16               |  2            |  2
     float                |  4            |  4
     double               |  8            |  8
     long double          | 16            | 16
@@ -397,6 +405,7 @@ There are two conventions for C type sizes and alignments.
     long                 |  4            |  4
     long long            |  8            |  8
     void *               |  4            |  4
+    __fp16               |  2            |  2
     float                |  4            |  4
     double               |  8            |  8
     long double          | 16            | 16
@@ -419,6 +428,12 @@ Booleans (`bool`/`_Bool`) stored in memory or when being passed as scalar
 arguments are either `0` (`false`) or `1` (`true`).
 
 A null pointer (for all types) has the value zero.
+
+`__fp16` type is treated as storage specifiers and promoted immediately to
+single-precision `float` before any arithmetic operations. When `zfh`
+extension is enabled, `__fp16` becomes the arithmetic types, it means any
+arithmetic operations are done using native half precision instructions witout
+promotion. In RISC-V, `__fp16` type can be a function argument or a return type.
 
 `_Complex` types have the same layout as a struct containing two fields of the
 corresponding real type (`float`, `double`, or `long double`), with the first
